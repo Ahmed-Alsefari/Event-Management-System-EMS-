@@ -1,6 +1,7 @@
 # Event-Management-System-EMS-
 
 The Problem: 
+
 Customers face difficulties in organizing events and booking services because they often need to call or visit the company in person.
 There is no centralized system to manage bookings, which can lead to delays, confusion, or errors.
 Customers cannot easily view, edit, or cancel their bookings, and the manager has no simple way to track all reservations in one place.
