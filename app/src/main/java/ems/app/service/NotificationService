@@ -56,21 +56,23 @@ public class NotificationService {
             }
 
             msg.setTo(customerEmail);
-            msg.setSubject("Event Status Update: " + event.getTitle());
+            msg.setSubject("Event Booking Update: " + event.getTitle() + " - Status: " + status);
 
             String customerName = event.getUser().getName();
 
             String messageText = String.format(
-                    "Hello %s,\n\n" +
-                            "Your event booking has been updated:\n\n" +
-                            "Event: %s\n" +
-                            "Date: %s\n" +
-                            "Location: %s\n" +
-                            "Attendees: %d\n" +
-                            "Status: %s\n\n" +
-                            "Thank you for using our Event Management System!\n\n" +
+                    "Dear %s,\n\n" +
+                            "We would like to inform you about the status update for your event booking:\n\n" +
+                            "EVENT DETAILS:\n" +
+                            "• Event: %s\n" +
+                            "• Date: %s\n" +
+                            "• Location: %s\n" +
+                            "• Number of Attendees: %d\n" +
+                            "• Current Status: %s\n\n" +
+                            "If you have any questions or need further assistance, please don't hesitate to contact us.\n\n" +
                             "Best regards,\n" +
-                            "EMS Team",
+                            "Event Management System Team\n" +
+                            "EMS Support",
                     customerName,
                     event.getTitle(),
                     event.getDate(),
