@@ -15,9 +15,11 @@ public class ServicePackageService {
     public List<ServicePackage> findAll() {
         return repo.findAll();
     }
+
     public ServicePackage add(ServicePackage service) {
         return repo.save(service);
     }
+
     public void updatePrice(Long id, double newPrice) {
         repo.findById(id).ifPresent(s -> {
             s.setPrice(newPrice);
@@ -46,4 +48,3 @@ public class ServicePackageService {
         });
     }
 }
-
