@@ -92,5 +92,3 @@ public class NotificationService {
         return notificationRepository.findByUserId(userId);
     }
 }
-
-
