@@ -1,3 +1,4 @@
+
 package ems.app.repository;
 
 import ems.app.model.Event;
@@ -13,3 +14,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     // Find all events created by a user ID
     List<Event> findByUserId(Long userId);
 }
+
