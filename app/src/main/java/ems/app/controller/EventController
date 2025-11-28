@@ -1,3 +1,4 @@
+
 package ems.app.controller;
 
 import ems.app.model.Event;
@@ -36,7 +37,7 @@ public class EventController {
         return "customer/book";
     }
 
-    // Save Event
+    // Save Event - FIXED: Now links event to user
     @PostMapping("/book")
     public String saveEvent(@ModelAttribute Event event,
                             @AuthenticationPrincipal UserDetails userDetails) {
@@ -44,6 +45,7 @@ public class EventController {
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        event.setUser(user);  // FIXED: Link the event to the logged-in user
         event.setStatus("Pending");
         eventRepository.save(event);
         return "redirect:/dashboard/profile?eventCreated";
@@ -60,6 +62,11 @@ public class EventController {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
+        // SECURITY: Check if this event belongs to the logged-in user
+        if (!event.getUser().getId().equals(user.getId())) {
+            return "redirect:/dashboard/profile?error=unauthorized";
+        }
+
         model.addAttribute("user", user);
         model.addAttribute("event", event);
         model.addAttribute("packages", packageService.findAll());
@@ -70,8 +77,16 @@ public class EventController {
     @PostMapping("/events/update")
     public String updateEvent(@ModelAttribute Event event,
                               @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Event existing = eventRepository.findById(event.getId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // SECURITY: Check if this event belongs to the logged-in user
+        if (!existing.getUser().getId().equals(user.getId())) {
+            return "redirect:/dashboard/profile?error=unauthorized";
+        }
 
         existing.setTitle(event.getTitle());
         existing.setDescription(event.getDescription());
@@ -88,8 +103,16 @@ public class EventController {
     @GetMapping("/events/cancel/{id}")
     public String cancelEvent(@PathVariable Long id,
                               @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // SECURITY: Check if this event belongs to the logged-in user
+        if (!event.getUser().getId().equals(user.getId())) {
+            return "redirect:/dashboard/profile?error=unauthorized";
+        }
 
         event.setStatus("Cancelled");
         eventRepository.save(event);
