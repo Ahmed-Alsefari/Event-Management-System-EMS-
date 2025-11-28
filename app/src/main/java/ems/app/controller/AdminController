@@ -1,0 +1,96 @@
+package ems.app.controller;
+
+import ems.app.model.ServicePackage;
+import ems.app.model.Event;
+import ems.app.service.ReservationService;
+import ems.app.service.ServicePackageService;
+import ems.app.service.NotificationService;
+import ems.app.repository.EventRepository;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/admin")
+public class AdminController {
+
+    private final ReservationService reservationService;
+    private final ServicePackageService packageService;
+    private final EventRepository eventRepository;
+    private final NotificationService notificationService;
+
+    // Admin Dashboard
+    @GetMapping("/dashboard")
+    public String adminDashboard(Model model) {
+        model.addAttribute("reservations", reservationService.findAll());
+        model.addAttribute("packages", packageService.findAll());
+        model.addAttribute("events", eventRepository.findAll());
+        return "admin_dashboard";
+    }
+
+    // Add Service Package
+    @PostMapping("/service/add")
+    public String addService(@ModelAttribute ServicePackage service) {
+        packageService.add(service);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Update Package Price
+    @PostMapping("/service/update-price")
+    public String updatePrice(@RequestParam Long id, @RequestParam double price) {
+        packageService.updatePrice(id, price);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Update Service Package (MODIFY)
+    @PostMapping("/service/update")
+    public String updateService(@RequestParam Long id,
+                                @RequestParam String name,
+                                @RequestParam String description,
+                                @RequestParam double price) {
+        packageService.updateService(id, name, description, price);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Delete Service Package
+    @GetMapping("/service/delete/{id}")
+    public String deleteService(@PathVariable Long id) {
+        packageService.delete(id);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Delete Event
+    @GetMapping("/events/delete/{id}")
+    public String deleteEvent(@PathVariable Long id) {
+        eventRepository.deleteById(id);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Update Event Status with Email Notification
+    @PostMapping("/events/update-status")
+    public String updateEventStatus(@RequestParam Long id, @RequestParam String status) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        String oldStatus = event.getStatus();
+        event.setStatus(status);
+        eventRepository.save(event);
+
+        // Send email notification if status changed
+        if (!oldStatus.equals(status)) {
+            notificationService.sendEventStatusEmail(event, status);
+        }
+
+        return "redirect:/admin/dashboard";
+    }
+
+    // Update Reservation Status
+    @PostMapping("/reservations/update-status")
+    public String updateReservationStatus(@RequestParam Long id, @RequestParam String status) {
+        reservationService.updateStatus(id, status);
+        return "redirect:/admin/dashboard";
+    }
+}
