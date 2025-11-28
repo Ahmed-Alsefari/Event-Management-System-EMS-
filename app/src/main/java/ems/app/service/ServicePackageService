@@ -19,7 +19,6 @@ public class ServicePackageService {
     public ServicePackage add(ServicePackage service) {
         return repo.save(service);
     }
-
     public void updatePrice(Long id, double newPrice) {
         repo.findById(id).ifPresent(s -> {
             s.setPrice(newPrice);
