@@ -15,7 +15,6 @@ public class ServicePackageService {
     public List<ServicePackage> findAll() {
         return repo.findAll();
     }
-
     public ServicePackage add(ServicePackage service) {
         return repo.save(service);
     }
