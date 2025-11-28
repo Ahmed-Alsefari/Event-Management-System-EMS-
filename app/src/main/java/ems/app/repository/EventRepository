@@ -1,7 +1,15 @@
 package ems.app.repository;
 
 import ems.app.model.Event;
+import ems.app.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface EventRepository extends JpaRepository<Event, Long> {
+    // Find all events created by a specific user
+    List<Event> findByUser(User user);
+
+    // Find all events created by a user ID
+    List<Event> findByUserId(Long userId);
 }
