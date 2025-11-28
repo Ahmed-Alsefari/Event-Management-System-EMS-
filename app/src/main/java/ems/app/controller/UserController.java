@@ -96,3 +96,4 @@ public class UserController {
         return "redirect:/dashboard/profile?updated";
     }
 }
+
