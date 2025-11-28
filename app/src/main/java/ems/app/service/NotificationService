@@ -37,7 +37,7 @@ public class NotificationService {
         return saved;
     }
 
-    // SEND EVENT STATUS EMAIL (NEW)
+    // SEND EVENT STATUS EMAIL - FIXED: Now uses actual customer email
     public void sendEventStatusEmail(Event event, String status) {
         if (mailSender == null) {
             System.out.println("⚠️ Mail sender not configured. Email not sent.");
@@ -47,14 +47,21 @@ public class NotificationService {
         try {
             SimpleMailMessage msg = new SimpleMailMessage();
 
-            // NOTE: You should link Event to User in database to get customer email
-            // For now, using a placeholder. Update this when you add User to Event model
-            msg.setTo("customer@example.com");
+            // FIXED: Get actual customer email from the event's user
+            String customerEmail = event.getUser() != null ? event.getUser().getEmail() : null;
 
+            if (customerEmail == null) {
+                System.err.println("❌ Cannot send email: Customer email not found for event ID " + event.getId());
+                return;
+            }
+
+            msg.setTo(customerEmail);
             msg.setSubject("Event Status Update: " + event.getTitle());
 
+            String customerName = event.getUser().getName();
+
             String messageText = String.format(
-                    "Hello,\n\n" +
+                    "Hello %s,\n\n" +
                             "Your event booking has been updated:\n\n" +
                             "Event: %s\n" +
                             "Date: %s\n" +
@@ -64,6 +71,7 @@ public class NotificationService {
                             "Thank you for using our Event Management System!\n\n" +
                             "Best regards,\n" +
                             "EMS Team",
+                    customerName,
                     event.getTitle(),
                     event.getDate(),
                     event.getLocation(),
@@ -74,7 +82,7 @@ public class NotificationService {
             msg.setText(messageText);
             mailSender.send(msg);
 
-            System.out.println("✅ Email sent successfully to customer!");
+            System.out.println("✅ Email sent successfully to " + customerEmail + "!");
         } catch (Exception e) {
             System.err.println("❌ Failed to send email: " + e.getMessage());
         }
@@ -84,3 +92,4 @@ public class NotificationService {
         return notificationRepository.findByUserId(userId);
     }
 }
+
