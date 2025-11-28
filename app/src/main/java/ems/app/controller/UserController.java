@@ -65,9 +65,7 @@ public class UserController {
         return "customer/services";
     }
 
-    // BOOK PAGE (handled by EventController)
-
-    // PROFILE PAGE
+    // PROFILE PAGE - FIXED: Only show user's own events
     @GetMapping("/dashboard/profile")
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails == null) return "redirect:/login";
@@ -76,8 +74,9 @@ public class UserController {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // FIXED: Get only THIS user's events, not all events
         model.addAttribute("user", user);
-        model.addAttribute("events", eventRepository.findAll());
+        model.addAttribute("events", eventRepository.findByUserId(user.getId()));
         return "customer/profile";
     }
 
@@ -97,4 +96,3 @@ public class UserController {
         return "redirect:/dashboard/profile?updated";
     }
 }
-
