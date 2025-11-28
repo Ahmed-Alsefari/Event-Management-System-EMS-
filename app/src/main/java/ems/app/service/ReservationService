@@ -1,5 +1,4 @@
 
-
 package ems.app.service;
 
 import ems.app.model.Reservation;
@@ -45,4 +44,3 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 }
-
