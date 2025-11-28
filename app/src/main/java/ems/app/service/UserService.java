@@ -1,5 +1,4 @@
 
-
 package ems.app.service;
 
 import ems.app.model.User;
@@ -34,3 +33,4 @@ public class UserService {
         return userRepository.save(user);
     }
 }
+
