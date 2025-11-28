@@ -1,3 +1,4 @@
+
 package ems.app.controller;
 
 import ems.app.model.ServicePackage;
@@ -79,6 +80,10 @@ public class AdminController {
         model.addAttribute("bookingsTrend", bookingsTrend);
         model.addAttribute("recentActivity", recentActivity);
 
+        // --- FIX START: Added this line to resolve 500 Error ---
+        model.addAttribute("packages", packageService.findAll());
+        // --- FIX END ---
+
         return "admin_dashboard";
     }
 
@@ -134,7 +139,6 @@ public class AdminController {
     public String reservationDetails(@PathVariable Long id, Model model) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
-
         model.addAttribute("event", event);
         return "admin_reservation_details";
     }
@@ -144,7 +148,6 @@ public class AdminController {
     public String updateEventStatus(@RequestParam Long id, @RequestParam String status) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
-
         String oldStatus = event.getStatus();
         event.setStatus(status);
         eventRepository.save(event);
@@ -179,7 +182,6 @@ public class AdminController {
                             e.getServicePackage() != null)
                     .mapToDouble(e -> e.getServicePackage().getPrice())
                     .sum();
-
             trend.put(monthKey, revenue);
         }
 
@@ -198,7 +200,6 @@ public class AdminController {
             int count = (int) events.stream()
                     .filter(e -> e.getDate() != null && e.getDate().startsWith(monthKey))
                     .count();
-
             trend.put(monthKey, count);
         }
 
