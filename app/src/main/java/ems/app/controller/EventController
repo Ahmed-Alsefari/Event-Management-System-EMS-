@@ -1,0 +1,99 @@
+package ems.app.controller;
+
+import ems.app.model.Event;
+import ems.app.model.User;
+import ems.app.repository.EventRepository;
+import ems.app.service.ServicePackageService;
+import ems.app.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/dashboard")
+public class EventController {
+
+    private final EventRepository eventRepository;
+    private final ServicePackageService packageService;
+    private final UserService userService;
+
+    // BOOK PAGE - Create Event
+    @GetMapping("/book")
+    public String bookPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) return "redirect:/login";
+
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        model.addAttribute("user", user);
+        model.addAttribute("event", new Event());
+        model.addAttribute("packages", packageService.findAll());
+        return "customer/book";
+    }
+
+    // Save Event
+    @PostMapping("/book")
+    public String saveEvent(@ModelAttribute Event event,
+                            @AuthenticationPrincipal UserDetails userDetails) {
+
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        event.setStatus("Pending");
+        eventRepository.save(event);
+        return "redirect:/dashboard/profile?eventCreated";
+    }
+
+    // EDIT EVENT PAGE
+    @GetMapping("/events/edit/{id}")
+    public String editEventPage(@PathVariable Long id,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                Model model) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        model.addAttribute("user", user);
+        model.addAttribute("event", event);
+        model.addAttribute("packages", packageService.findAll());
+        return "customer/edit_event";
+    }
+
+    // UPDATE EVENT
+    @PostMapping("/events/update")
+    public String updateEvent(@ModelAttribute Event event,
+                              @AuthenticationPrincipal UserDetails userDetails) {
+        Event existing = eventRepository.findById(event.getId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        existing.setTitle(event.getTitle());
+        existing.setDescription(event.getDescription());
+        existing.setDate(event.getDate());
+        existing.setLocation(event.getLocation());
+        existing.setSeats(event.getSeats());
+        existing.setServicePackage(event.getServicePackage());
+
+        eventRepository.save(existing);
+        return "redirect:/dashboard/profile?eventUpdated";
+    }
+
+    // CANCEL EVENT
+    @GetMapping("/events/cancel/{id}")
+    public String cancelEvent(@PathVariable Long id,
+                              @AuthenticationPrincipal UserDetails userDetails) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        event.setStatus("Cancelled");
+        eventRepository.save(event);
+
+        return "redirect:/dashboard/profile?eventCancelled";
+    }
+}
