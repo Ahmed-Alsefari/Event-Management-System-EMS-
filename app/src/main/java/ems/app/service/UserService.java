@@ -3,8 +3,10 @@ package ems.app.service;
 
 import ems.app.model.User;
 import ems.app.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -33,4 +35,5 @@ public class UserService {
         return userRepository.save(user);
     }
 }
+
 
