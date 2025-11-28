@@ -27,7 +27,6 @@ public class ServicePackageService {
         });
     }
 
-    // UPDATE SERVICE PACKAGE (NEW)
     public void updateService(Long id, String name, String description, double price) {
         repo.findById(id).ifPresent(s -> {
             s.setName(name);
@@ -37,10 +36,16 @@ public class ServicePackageService {
         });
     }
 
-    // DELETE SERVICE PACKAGE (NEW)
     public void delete(Long id) {
         repo.deleteById(id);
     }
-}
 
+    // NEW: Toggle active/inactive status
+    public void toggleActive(Long id) {
+        repo.findById(id).ifPresent(s -> {
+            s.setActive(!s.isActive());
+            repo.save(s);
+        });
+    }
+}
 
