@@ -1,4 +1,3 @@
-
 package ems.app.controller;
 
 import ems.app.model.Event;
@@ -147,4 +146,3 @@ public class EventController {
         return "redirect:/dashboard/profile?eventCancelled";
     }
 }
-
