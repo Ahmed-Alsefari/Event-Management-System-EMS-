@@ -22,3 +22,4 @@ public class Reservation {
     private double totalPrice;
     private LocalDateTime createdAt = LocalDateTime.now();
 }
+
