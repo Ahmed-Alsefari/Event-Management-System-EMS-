@@ -265,7 +265,13 @@ Password: user123
 
 ### Use Ngrok to run it online
 
-setup Ngrok and run it in same port the `application.properties` server.port
+setup Ngrok and 
+
+open Ngrok command line
+
+run it in same port the `application.properties` server.port
+
+ngrok http `server.port`
 
 
 
