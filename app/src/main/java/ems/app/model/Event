@@ -27,3 +27,4 @@ public class Event {
 
     private String status = "Pending"; // Pending, Confirmed, Cancelled
 }
+
