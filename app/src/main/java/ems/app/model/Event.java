@@ -1,0 +1,32 @@
+package ems.app.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Table(name = "events")
+@Data
+
+// name  = events
+
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+    private String description;
+    private String date;
+    private String location;
+    private int seats;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_package_id")
+    private ServicePackage servicePackage;
+
+    private String status = "Pending"; // Pending, Confirmed, Cancelled
+}

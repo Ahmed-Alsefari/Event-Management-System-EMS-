@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" dir="ltr">
+<head>
+    <title>All Reservations - EMS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Force English numerals - CRITICAL */
+        * {
+            font-variant-numeric: lining-nums !important;
+            direction: ltr !important;
+        }
+
+        :root {
+    --primary-color: #85586F; --primary-dark: #744c63; --secondary-color: #D0B8A8;
+    --accent-color: #DFD3C3; --success-color: #10b981; --warning-color: #f59e0b;
+    --error-color: #ef4444; --info-color: #3b82f6; --bg-color: #F8EDE3;
+    --surface-color: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b;
+    --border-color: #DFD3C3;
+    --shadow: 0 4px 6px -1px rgba(133, 88, 111, 0.1), 0 2px 4px -1px rgba(133, 88, 111, 0.06);
+    --shadow-lg: 0 20px 25px -5px rgba(133, 88, 111, 0.1), 0 10px 10px -5px rgba(133, 88, 111, 0.04);
+}
+[data-theme="dark"] {
+    --primary-color: #D0B8A8; --primary-dark: #c8ab97; --secondary-color: #85586F;
+    --accent-color: #744c63; --success-color: #34d399; --warning-color: #fbbf24;
+    --error-color: #f87171; --info-color: #60a5fa; --bg-color: #1a1625;
+    --surface-color: #2d2538; --text-primary: #f1f5f9; --text-secondary: #cbd5e1;
+    --border-color: #4a3a52;
+}
+        * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body { background-color: var(--bg-color); color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .navbar-admin {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 1rem 0; box-shadow: var(--shadow);
+        }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: white !important; }
+        .nav-link { color: rgba(255, 255, 255, 0.8) !important; font-weight: 500;
+            padding: 0.5rem 1rem !important; border-radius: 8px; transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { color: white !important; background: rgba(255, 255, 255, 0.15); }
+        .theme-toggle { background: rgba(255, 255, 255, 0.2); border: none; color: white;
+            padding: 0.5rem 1rem; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
+        .theme-toggle:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+        .page-header { padding: 2rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .page-title { font-size: 2.5rem; font-weight: 800; color: var(--text-primary);
+            display: flex; align-items: center; gap: 0.75rem; }
+        .total-badge { padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white; }
+        .alert-custom { border-radius: 12px; padding: 1rem 1.25rem; border: none;
+            margin-bottom: 1.5rem; animation: slideIn 0.5s ease; }
+        .alert-success-custom { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color);
+            border-left: 4px solid var(--success-color); }
+        .alert-info-custom { background-color: rgba(59, 130, 246, 0.1); color: var(--info-color);
+            border-left: 4px solid var(--info-color); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); } }
+        .table-card { background-color: var(--surface-color); border-radius: 16px;
+            box-shadow: var(--shadow); border: 1px solid var(--border-color); overflow: hidden; }
+
+        /* Table styling with dark mode fix */
+        .table {
+            margin: 0;
+        }
+        .table thead {
+            background: linear-gradient(135deg, #1e293b, #334155) !important;
+        }
+        .table thead th {
+            color: #ffffff !important;
+            padding: 1.25rem 1rem;
+            font-weight: 600;
+            border: none;
+            background: transparent !important;
+        }
+        [data-theme="dark"] .table thead th {
+            color: #ffffff !important;
+        }
+        [data-theme="light"] .table thead th {
+            color: #ffffff !important;
+        }
+        .table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            background-color: var(--surface-color);
+        }
+        .table tbody tr:hover {
+            background-color: var(--bg-color) !important;
+        }
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            color: var(--text-primary) !important;
+            background-color: transparent;
+        }
+        [data-theme="dark"] .table tbody tr {
+            background-color: var(--surface-color);
+        }
+        [data-theme="dark"] .table tbody td {
+            color: var(--text-primary) !important;
+        }
+
+        .badge { padding: 0.4rem 0.8rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--error-color); }
+        .btn-view { padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none; color: white; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 0.5rem; transition: all 0.3s ease; }
+        .btn-view:hover { transform: translateY(-2px); box-shadow: var(--shadow); color: white; }
+        .empty-state { text-align: center; padding: 4rem 1rem; }
+        .empty-icon { font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .empty-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .empty-text { color: var(--text-secondary); }
+        @media (max-width: 768px) {
+            .page-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-admin">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">
+            <i class="fas fa-shield-alt"></i> EMS Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/packages}">Service Packages</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/admin/reservations}">Reservations</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4 mb-5">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-list"></i> All Reservations
+        </h1>
+        <div>
+            <span class="total-badge">Total: <span th:text="${#lists.size(events)}">0</span></span>
+        </div>
+    </div>
+
+    <div th:if="${param.updated}" class="alert-custom alert-success-custom">
+        <i class="fas fa-check-circle"></i> Reservation updated successfully!
+    </div>
+    <div th:if="${param.deleted}" class="alert-custom alert-info-custom">
+        <i class="fas fa-trash"></i> Reservation deleted successfully!
+    </div>
+
+    <div th:if="${#lists.isEmpty(events)}" class="table-card">
+        <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+            <h4 class="empty-title">No reservations found</h4>
+            <p class="empty-text">Reservations will appear here once customers start booking</p>
+        </div>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(events)}" class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Package</th>
+                    <th>Event Date</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event : ${events}">
+                    <td th:text="${event.id}"></td>
+                    <td th:text="${event.user != null ? event.user.name : 'N/A'}"></td>
+                    <td th:text="${event.user != null ? event.user.email : 'N/A'}"></td>
+                    <td th:text="${event.servicePackage != null ? event.servicePackage.name : 'No Package'}"></td>
+                    <td th:text="${event.date}"></td>
+                    <td>
+                                <span th:if="${event.servicePackage != null}">
+                                    $<span th:text="${event.servicePackage.price}">0</span>
+                                </span>
+                        <span th:if="${event.servicePackage == null}" style="color: var(--text-secondary);">$0.00</span>
+                    </td>
+                    <td>
+                                <span th:class="${'badge ' +
+                                    (event.status == 'Confirmed' ? 'badge-success' :
+                                     event.status == 'Cancelled' ? 'badge-danger' : 'badge-warning')}"
+                                      th:text="${event.status}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/admin/reservations/' + ${event.id}}" class="btn-view">
+                            <i class="fas fa-info-circle"></i> Details
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to convert Arabic-Indic numerals to Western numerals
+    function convertArabicNumerals() {
+        const arabicToWestern = {
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+
+        const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+
+        let node;
+        while (node = walker.nextNode()) {
+            let text = node.textContent;
+            let converted = text.replace(/[٠-٩]/g, char => arabicToWestern[char] || char);
+            if (text !== converted) {
+                node.textContent = converted;
+            }
+        }
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const themeIcon = document.getElementById('theme-icon');
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Convert any Arabic numerals to Western numerals
+        convertArabicNumerals();
+
+        // Apply saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.getElementById('theme-icon');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
