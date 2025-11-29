@@ -1,2 +1,12 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Ignore Maven wrapper in language stats
+mvnw linguist-detectable=false
+mvnw.cmd linguist-detectable=false
+
+# Force HTML detection
+*.html linguist-language=HTML
+
+# Ignore build output
+target/* linguist-detectable=false
