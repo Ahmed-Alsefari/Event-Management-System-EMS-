@@ -144,4 +144,131 @@ The system was fully tested using JUnit.
 
 ---
 
+## 🚀 How to Run the Event Management System (EMS)
+===============================================
+
+Follow the steps below to set up and run the EMS application on your machine.
+
+* * * * *
+
+1️⃣ Requirements
+----------------
+
+Make sure the following tools are installed:
+
+-   Java 17+
+
+-   IntelliJ IDEA (or any Spring Boot-compatible IDE)
+
+-   Docker Desktop
+
+-   PostgreSQL Docker Image
+
+-   Git
+
+* * * * *
+
+2️⃣ Clone the Repository
+------------------------
+
+Open the terminal and run:
+
+git clone https://github.com/Ahmed-Alsefari/Event-Management-System-EMS.git\
+cd Event-Management-System-EMS
+
+* * * * *
+
+3️⃣ Start the PostgreSQL Database (Docker)
+------------------------------------------
+
+### Option A --- Using docker-compose (if included in the project)
+
+docker-compose up -d
+
+### Option B --- Run PostgreSQL manually
+
+docker run --name EMS_DB\
+-e POSTGRES_USER=postgres\
+-e POSTGRES_PASSWORD=12345\
+-e POSTGRES_DB=ems_db\
+-p 5432:5432\
+-d postgres
+
+* * * * *
+
+4️⃣ Configure Database Connection
+---------------------------------
+
+Open `application.properties` and ensure these settings are correct:
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/ems_db\
+spring.datasource.username=postgres\
+spring.datasource.password=12345
+
+spring.jpa.hibernate.ddl-auto=update\
+spring.jpa.show-sql=true
+
+Update the username/password if you use different credentials.
+
+* * * * *
+
+5️⃣ Run the Application
+-----------------------
+
+### Option A --- Run from IntelliJ IDEA
+
+1.  Open the project in IntelliJ
+
+2.  Navigate to: `src/main/java/com/ems/EmsApplication.java`
+
+3.  Click **Run ▶**
+
+### Option B --- Run from terminal
+
+./mvnw spring-boot:run
+
+* * * * *
+
+6️⃣ Access the Application
+--------------------------
+
+Once the server is running, open your browser:
+
+### Customer Interface
+
+http://localhost:8080/
+
+### Admin Dashboard
+
+http://localhost:8080/admin
+
+* * * * *
+
+7️⃣ Default Login Accounts (Example)
+------------------------------------
+
+Use any accounts stored in your database.
+
+Admin Example:\
+Email: admin@ems.com\
+Password: admin123
+
+User Example:\
+Email: user@ems.com\
+Password: user123
+
+(Replace these with your actual data if different.)
+
+* * * * *
+
+8️⃣ Run Automated Tests (JUnit)
+-------------------------------
+
+### From IntelliJ:
+
+Right-click the **test** folder → **Run All Tests**
+
+### From terminal:
+
+./mvnw test
 © 2025 Event Management System (EMS)
