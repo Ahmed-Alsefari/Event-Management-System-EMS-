@@ -218,7 +218,7 @@ Update the username/password if you use different credentials.
 
 1.  Open the project in IntelliJ
 
-2.  Navigate to: `src/main/java/com/ems/EmsApplication.java`
+2.  Navigate to: `src/main/java/com/ems/AppApplication.java`
 
 3.  Click **Run ▶**
 
@@ -260,16 +260,13 @@ Password: user123
 
 * * * * *
 
-8️⃣ Run Automated Tests (JUnit)
+8️⃣ Run Ngrok
 -------------------------------
 
-### From IntelliJ:
+### Use Ngrok to run it online
 
-Right-click the **test** folder → **Run All Tests**
+setup Ngrok and run it in same port the `application.properties` server.port
 
-### From terminal:
-
-./mvnw test
 
 
 © 2025 Event Management System (EMS)
