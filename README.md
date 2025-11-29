@@ -145,7 +145,6 @@ The system was fully tested using JUnit.
 ---
 
 ## 🚀 How to Run the Event Management System (EMS)
-===============================================
 
 Follow the steps below to set up and run the EMS application on your machine.
 
@@ -271,4 +270,6 @@ Right-click the **test** folder → **Run All Tests**
 ### From terminal:
 
 ./mvnw test
+
+
 © 2025 Event Management System (EMS)
