@@ -1,11 +1,3 @@
-package ems.app.model;
-
-import jakarta.persistence.*;
-import lombok.Data;
-
-@Entity
-@Table(name = "events")
-@Data
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
