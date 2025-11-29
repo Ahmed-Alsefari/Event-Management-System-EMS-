@@ -1,4 +1,3 @@
-
 package ems.app.service;
 
 import ems.app.model.Event;

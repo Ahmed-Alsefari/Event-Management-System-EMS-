@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" dir="ltr">
 <head>
     <title>Admin Dashboard - EMS</title>
     <meta charset="UTF-8">
@@ -9,6 +8,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Force English numerals - CRITICAL */
+        * {
+            font-variant-numeric: lining-nums !important;
+            direction: ltr !important;
+        }
+
         :root {
     --primary-color: #85586F; --primary-dark: #744c63; --secondary-color: #D0B8A8;
     --accent-color: #DFD3C3; --success-color: #10b981; --warning-color: #f59e0b;
@@ -63,7 +68,7 @@
             margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
         .chart-container {
             position: relative;
-            height: 300px; /* Fixed height for the chart container */
+            height: 300px;
             width: 100%;
         }
         .quick-stat-card { background-color: var(--surface-color); border-radius: 12px;
@@ -75,10 +80,48 @@
         .quick-stat-value { font-size: 2rem; font-weight: 800; }
         .activity-table { background-color: var(--surface-color); border-radius: 16px;
             box-shadow: var(--shadow); border: 1px solid var(--border-color); overflow: hidden; }
-        .table { margin: 0; color: var(--text-primary); }
-        .table thead { background: linear-gradient(135deg, #1e293b, #334155); color: white; }
-        .table tbody tr { border-bottom: 1px solid var(--border-color); transition: all 0.3s ease; }
-        .table tbody tr:hover { background-color: var(--bg-color); }
+
+        /* Table styling with dark mode fix */
+        .table {
+            margin: 0;
+        }
+        .table thead {
+            background: linear-gradient(135deg, #1e293b, #334155) !important;
+        }
+        .table thead th {
+            color: #ffffff !important;
+            padding: 1rem;
+            font-weight: 600;
+            border: none;
+            background: transparent !important;
+        }
+        [data-theme="dark"] .table thead th {
+            color: #ffffff !important;
+        }
+        [data-theme="light"] .table thead th {
+            color: #ffffff !important;
+        }
+        .table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            background-color: var(--surface-color);
+        }
+        .table tbody tr:hover {
+            background-color: var(--bg-color) !important;
+        }
+        .table tbody td {
+            color: var(--text-primary) !important;
+            padding: 1rem;
+            background-color: transparent;
+        }
+
+        [data-theme="dark"] .table tbody tr {
+            background-color: var(--surface-color);
+        }
+        [data-theme="dark"] .table tbody td {
+            color: var(--text-primary) !important;
+        }
+
         .badge { padding: 0.4rem 0.8rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; }
         .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
@@ -91,7 +134,7 @@
         @media (max-width: 768px) {
             .page-title { font-size: 2rem; }
             .stat-value { font-size: 2rem; }
-            .chart-container { height: 250px; } /* Slightly smaller on mobile */
+            .chart-container { height: 250px; }
         }
     </style>
 </head>
@@ -292,8 +335,41 @@
 </div>
 
 <script th:inline="javascript">
-    // Initialize charts after DOM is fully loaded
+    // Function to convert Arabic-Indic numerals to Western numerals
+    function convertArabicNumerals() {
+        const arabicToWestern = {
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+
+        // Convert all text nodes in the document
+        const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+
+        let node;
+        while (node = walker.nextNode()) {
+            let text = node.textContent;
+            let converted = text.replace(/[٠-٩]/g, char => arabicToWestern[char] || char);
+            if (text !== converted) {
+                node.textContent = converted;
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Convert any Arabic numerals to Western numerals
+        convertArabicNumerals();
+
+        // Apply theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.getElementById('theme-icon');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
         // Revenue Chart
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
         const revenueTrendData = /*[[${revenueTrend}]]*/ {};
@@ -388,12 +464,6 @@
                 }
             }
         });
-
-        // Theme initialization
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        const themeIcon = document.getElementById('theme-icon');
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     });
 
     function toggleTheme() {

@@ -1,5 +1,5 @@
-
 package ems.app.service;
+
 import ems.app.model.Reservation;
 import ems.app.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,3 +43,4 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 }
+
