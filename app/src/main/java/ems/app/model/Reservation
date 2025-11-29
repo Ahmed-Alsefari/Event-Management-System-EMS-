@@ -2,16 +2,23 @@ package ems.app.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class ServicePackage {
+public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String description;
-    private double price;
-    private boolean active = true;
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private ServicePackage servicePackage;
+
+    private LocalDateTime eventDate;
+    private String status;   // Pending, Confirmed, Cancelled
+    private double totalPrice;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
