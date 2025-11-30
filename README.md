@@ -200,12 +200,15 @@ docker run --name EMS_DB\
 
 Open `application.properties` and ensure these settings are correct:
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/ems_db\
-spring.datasource.username=postgres\
-spring.datasource.password=12345
+spring.datasource.url=jdbc:postgresql://localhost:5432/emsdb
+spring.datasource.username=postgres
+spring.datasource.password=1234
+spring.datasource.driver-class-name=org.postgresql.Driver
 
-spring.jpa.hibernate.ddl-auto=update\
-spring.jpa.show-sql=true
+
+** or run this line in docker terminal >> **
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=1234 -e POSTGRES_USER=postgres -e POSTGRES_DB=emsdb postgres
+
 
 Update the username/password if you use different credentials.
 
