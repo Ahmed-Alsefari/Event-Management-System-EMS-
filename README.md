@@ -202,10 +202,15 @@ Open `application.properties` and ensure these settings are correct:
 
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/emsdb
+
 spring.datasource.username=postgres
+
 spring.datasource.password=1234
+
 spring.datasource.driver-class-name=org.postgresql.Driver
+
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
 spring.jpa.hibernate.ddl-auto=update
 
 
