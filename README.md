@@ -205,10 +205,8 @@ spring.datasource.username=postgres
 spring.datasource.password=1234
 spring.datasource.driver-class-name=org.postgresql.Driver
 
-
-** or run this line in docker terminal >> **
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=1234 -e POSTGRES_USER=postgres -e POSTGRES_DB=emsdb postgres
-
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
 
 Update the username/password if you use different credentials.
 
